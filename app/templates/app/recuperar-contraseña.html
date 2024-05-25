@@ -1,0 +1,42 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block contenido_fh %}
+<!--FORMULARIO PARA RECUPERAR CLAVE-->
+<br><br><br><br>
+<div class="custom-container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-center">Recuperar Contraseña</h2>
+            <div class="d-flex justify-content-center align-items-center">
+                <form id="passwordRecoveryForm">
+                    <div class="form-group">
+                      <label for="email">Correo Electrónico:</label>
+                      <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-dark btn-block">Recuperar Contraseña</button>
+                    </div>
+                    <br>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'login' %}" class="btn btn-dark btn-bloc">Volver</a>
+                      </div>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+{% endblock %}
+
+<!--SCRIPTS-->
+<script src="js/recuperar-con.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block contenido_fh %}
+    
+    <div class="container mt-5">
+      <h2>Carrito de Compras</h2>
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                  <th>Producto</th>
+                  <th>Nombre</th>
+                  <th>Precio por unidad</th>
+                  <th>Cantidad</th>
+                  <th>Total</th>
+                  <th>Acciones</th>
+              </tr>
+          </thead>
+          <tbody id="cart-items">
+              {% for item in cart_items %}
+              <tr class="cart-item" data-id="{{ item.id }}">
+                  <td>
+                      <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}" class="img-thumbnail" style="width: 100px;">
+                  </td>
+                  <td>{{ item.producto.nombre }}</td>
+                  <td class="cart-price">{{ item.producto.precio }} CLP</td>
+                  <td>
+                      <div class="input-group">
+                          <button class="btn btn-outline-secondary btn-sm decrease-quantity">-</button>
+                          <input type="text" class="form-control text-center cart-quantity" value="{{ item.quantity }}" readonly style="max-width: 50px;">
+                          <button class="btn btn-outline-secondary btn-sm increase-quantity">+</button>
+                      </div>
+                  </td>
+                  <td class="item-total">{{ item.total_price }} CLP</td>
+                  <td>
+                      <button class="btn btn-outline-danger btn-sm remove-from-cart">🗑️</button>
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+      <h3 class="text-right">Total: <span id="total-price">{{ total_price }}</span> CLP</h3>
+  
+      <!-- Opciones de método de entrega -->
+      <div class="mt-4">
+          <h4>Método de Entrega</h4>
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="delivery_method" id="delivery_store" value="store" checked>
+              <label class="form-check-label" for="delivery_store">
+                  Retiro en tienda
+              </label>
+          </div>
+          <div class="form-check">
+              <input class="form-check-input" type="radio" name="delivery_method" id="delivery_home" value="home">
+              <label class="form-check-label" for="delivery_home">
+                  Despacho a domicilio (entrega en 2-3 días hábiles)
+              </label>
+          </div>
+      </div>
+  
+      <!-- Botón de pagar -->
+      <div class="text-right mt-4">
+          <button class="btn btn-success" id="pay-button">Pagar</button>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+  $(document).ready(function() {
+      function updateCart() {
+          var totalPrice = 0;
+          $('.cart-item').each(function() {
+              var price = parseFloat($(this).find('.cart-price').text().replace(' CLP', ''));
+              var quantity = parseInt($(this).find('.cart-quantity').val());
+              var itemTotal = price * quantity;
+              $(this).find('.item-total').text(itemTotal.toFixed(2) + ' CLP');
+              totalPrice += itemTotal;
+          });
+          $('#total-price').text(totalPrice.toFixed(2) + ' CLP');
+      }
+  
+      $('.add-to-cart').click(function() {
+          var productId = $(this).data('id');
+          var cantidad = 1; // Puedes ajustar la cantidad según tus necesidades
+          $.post("{% url 'agregar_al_carrito' %}", {
+              producto_id: productId,
+              cantidad: cantidad,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+          }).done(function(data) {
+              if (data.status === 'ok') {
+                  alert(data.message);
+              } else {
+                  alert('Hubo un error al agregar el producto al carrito.');
+              }
+          }).fail(function() {
+              alert('Error en la solicitud.');
+          });
+      });
+  
+      $(document).on('click', '.remove-from-cart', function() {
+          var cartItemId = $(this).closest('.cart-item').data('id');
+          $.post("{% url 'eliminar_del_carrito' %}", {
+              cart_item_id: cartItemId,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+          }).done(function() {
+              $(this).closest('.cart-item').remove();
+              updateCart();
+          });
+      });
+  
+      $(document).on('click', '.increase-quantity', function() {
+          var cartItemId = $(this).closest('.cart-item').data('id');
+          var quantityInput = $(this).siblings('.cart-quantity');
+          var newQuantity = parseInt(quantityInput.val()) + 1;
+          $.post("{% url 'actualizar_carrito' %}", {
+              cart_item_id: cartItemId,
+              cantidad: newQuantity,
+              csrfmiddlewaretoken: '{{ csrf_token }}'
+          }).done(function() {
+              quantityInput.val(newQuantity);
+              updateCart();
+          });
+      });
+  
+      $(document).on('click', '.decrease-quantity', function() {
+          var cartItemId = $(this).closest('.cart-item').data('id');
+          var quantityInput = $(this).siblings('.cart-quantity');
+          var newQuantity = parseInt(quantityInput.val()) - 1;
+          if (newQuantity > 0) {
+              $.post("{% url 'actualizar_carrito' %}", {
+                  cart_item_id: cartItemId,
+                  cantidad: newQuantity,
+                  csrfmiddlewaretoken: '{{ csrf_token }}'
+              }).done(function() {
+                  quantityInput.val(newQuantity);
+                  updateCart();
+              });
+          }
+      });
+  
+      updateCart();
+  });
+    </script>
+{% endblock %}
+ 

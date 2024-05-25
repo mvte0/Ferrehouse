@@ -1,0 +1,304 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+}
+
+/*ESTILOS GENERALES*/
+.section-background {
+    background: linear-gradient(45deg, #f2f2f2, #dddddd); /* Fondo gradiente de color gris */
+    padding: 20px; /* Espaciado interno para mejorar la legibilidad */
+}
+
+.centered-text {
+    text-align: center; /* Centrar el texto */
+    font-style: italic; /* Aplicar cursiva al texto */
+    flex: 1; /* Hacer el texto flexible */
+  }
+  
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* o justify-content: space-between; */
+}
+
+.card-img-top {
+    height: 230px; /* Establece la altura deseada para las imágenes */
+    object-fit: cover; /* Ajusta la imagen para cubrir el tamaño del contenedor */
+    transition: transform 0.3s ease; /* Transición suave para la transformación */
+    border: 3px solid black; /* Agrega un borde de 5px de ancho de color negro */
+}
+
+.card-img-top:hover {
+    transform: scale(1.1); /* Escala la imagen al 110% cuando se pasa el mouse sobre ella */
+    cursor: pointer; /* Cambia el cursor a una mano cuando se pasa el mouse sobre la imagen */
+}
+
+.container-categorias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+    padding: 20px; /* Agrega un espacio de 20px alrededor del contenedor */
+}
+
+.card-img-top-cat {
+    width: 100%; /* Ajusta el ancho de la imagen al 100% del contenedor padre */
+    height: 230px; /* Establece la altura deseada para las imágenes */
+}
+  
+  
+.card-cat{
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc(25% - 5px); /* Ajusta el ancho de las tarjetas teniendo en cuenta el espacio entre ellas */
+    margin-bottom: 5px; /* Agrega un margen inferior de 5px para separar las filas */
+    margin: 3px;
+    border: 3px solid black; /* Agregar un borde de 3px negro */
+}
+  
+.card-body {
+    text-align: center;
+}
+  
+.container-form {
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    height: 35vh; /* Establece la altura del contenedor al 100% del alto de la ventana */
+}
+  
+form {
+    width: 50%; /* Establece el ancho del formulario al 80% del contenedor padre */
+}
+  
+.container-servicios {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* Ajusta según sea necesario */
+}
+
+/*ICONOS*/
+.google-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('google-icon.png');
+    background-size: cover;
+    margin-right: 10px;
+}
+
+.facebook-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('facebook-icon.png'); /* Reemplaza 'facebook-icon.png' con la ruta de tu imagen de Facebook */
+    background-size: cover;
+    margin-right: 10px;
+}
+
+.apple-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-image: url('apple-icon.png'); /* Reemplaza 'apple-icon.png' con la ruta de tu imagen de Apple */
+    background-size: cover;
+    margin-right: 10px;
+}
+
+/*FOOTER*/
+.pie-pagina{
+    width: 100%;
+    background-image: linear-gradient(to right, #808080, #CCCCCC);
+}
+
+.pie-pagina .grupo-1{
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 50px;
+    padding: 45px 0px;
+}
+
+.pie-pagina .grupo-1 .box figure{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+.pie-pagina .grupo-1 .box figure img{
+    width: 250px;
+}
+
+.pie-pagina .grupo-1 .box h2{
+    margin-bottom: 25px;
+    font-size: 20px;
+}
+
+.pie-pagina .grupo-1 .box p{
+    margin-bottom: 10px;
+}
+
+.pie-pagina .grupo-1 .red-social a{
+    display: inline-block;
+    text-decoration: none;
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    color: white;
+    margin-right: 10px;
+    background-color: black;
+    text-align: center;
+    transition: all 300ms ease;
+}
+
+/* Para eliminar los marcadores de lista */
+.no-bullets {
+    list-style-type: none;
+    padding-left: 0; /* Elimina cualquier relleno izquierdo predeterminado */
+    margin-left: 0; /* Elimina cualquier margen izquierdo predeterminado */
+}
+
+/* Añade margen izquierdo al elemento de lista */
+.no-bullets li {
+    margin-left: 0;
+}
+
+/* Para hacer que el enlace se vea como texto normal */
+.link-normal {
+    text-decoration: none;
+    color: inherit; /* Para heredar el color de texto del padre (negro por defecto) */
+}
+
+/* Opcionalmente, si deseas cambiar el color del enlace */
+.link-normal:hover {
+    color: white; /* Cambia a azul cuando se pasa el cursor sobre el enlace */
+}
+
+
+.pie-pagina .grupo-1 .red-social a:hover{
+    color: black;
+    background-color: white;
+}
+
+.pie-pagina .grupo-2{
+    background-color: gray;
+    padding: 15px 10px;
+    text-align: center;
+    color: black;
+}
+.pie-pagina .grupo-2 small{
+    font-size: 15px;
+}
+
+@media screen and (max-width: 800px) {
+    .pie-pagina .grupo-1{
+        width: 90%;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 30px;
+        padding: 35px 0px;
+        text-align: center;
+    }
+}
+
+/* ESTILOS DE LA TIENDA */
+/* ESTILOS DE LA TIENDA */
+#contenido-producto {
+    width: 80%;
+    margin: 10px auto;
+}
+
+.desc {
+    background: #c33;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 5px; /* Agregamos border-radius para que tenga esquinas cuadradas */
+}
+
+.productos {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.productos > .producto {
+    width: 25%;
+    margin-top: 10px;
+    transition: transform 0.3s ease; /* Transición suave para el movimiento */
+}
+
+.productos > .producto:hover {
+    transform: translateY(-5px); /* Mueve hacia arriba cuando se pasa el cursor */
+}
+
+.productos .producto img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.productos .producto .contenedor {
+    width: 90%;
+    background-color: #f7f7f7;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+.productos .producto .contenedor .detalle-producto {
+    padding: 10px;
+}
+
+.productos .producto .contenedor .detalle-producto .marca {
+    margin-top: 0;
+}
+
+.productos .producto .contenedor .detalle-producto .codigo {
+    margin-top: 5px;
+    color: #777;
+}
+
+.productos .producto .contenedor .detalle-producto .titulo {
+    margin-top: 10px;
+}
+
+.productos .producto .contenedor .detalle-producto .precio {
+    margin-top: 10px;
+    color: #007bff;
+}
+
+@media (max-width: 1024px) {
+    .productos > .producto {
+        width: 50%;
+    }
+}
+
+@media (max-width: 480px) {
+    .productos > .producto {
+        width: 100%;
+    }
+}
+

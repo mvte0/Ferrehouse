@@ -1,0 +1,124 @@
+{% extends "app/base.html" %}
+{% load static %}
+<!--"{% url 'indicadores' %}"-->
+{% block contenido_fh %}
+<div class="container mt-5">
+    <div class="header d-flex justify-content-between align-items-center">
+        <div class="profile">
+            <img src="profile-placeholder.png" alt="Perfil" width="80" height="80">
+            <div class="profile-info">
+                <strong>Contador</strong><br>
+                ID: 0001C
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="openMiIndicadores()">MiIndicadores</button>
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="confirmacion-pagos-tab" data-toggle="tab" href="#confirmacion-pagos" role="tab" aria-controls="confirmacion-pagos" aria-selected="true">Confirmación de Pagos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="ingreso-boletas-tab" data-toggle="tab" href="#ingreso-boletas" role="tab" aria-controls="ingreso-boletas" aria-selected="false">Ingreso de Boletas</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="myTabContent">
+        <div class="tab-pane fade show active" id="confirmacion-pagos" role="tabpanel" aria-labelledby="confirmacion-pagos-tab">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Cliente</th>
+                        <th>Método de Pago</th>
+                        <th>Precio</th>
+                        <th>Estado de Pago</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01</td>
+                        <td>Mateo Flores</td>
+                        <td>Paga en local</td>
+                        <td>$15,990</td>
+                        <td><span class="badge badge-warning">Pendiente</span></td>
+                        <td class="actions">
+                            <button class="btn btn-success btn-sm" onclick="aceptarPago(1)">Aceptar</button>
+                            <button class="btn btn-danger btn-sm" onclick="rechazarPago(1)">Rechazar</button>
+                        </td>
+                    </tr>
+                    <!-- Más filas según sea necesario -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="ingreso-boletas" role="tabpanel" aria-labelledby="ingreso-boletas-tab">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="id-boleta">ID de Boleta:</label>
+                    <input type="text" class="form-control" id="id-boleta" name="id_boleta" required>
+                </div>
+                <div class="form-group">
+                    <label for="cliente">Cliente:</label>
+                    <input type="text" class="form-control" id="cliente" name="cliente" required>
+                </div>
+                <div class="form-group">
+                    <label for="monto">Monto:</label>
+                    <input type="number" class="form-control" id="monto" name="monto" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="reset" class="btn btn-secondary">Cancelar</button>
+            </form>
+            <h3 class="mt-5">Boletas Ingresadas</h3>
+            <table class="table table-striped mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for boleta in boletas %}
+                    <tr>
+                        <td>{{ boleta.id_boleta }}</td>
+                        <td>{{ boleta.cliente }}</td>
+                        <td>{{ boleta.monto }}</td>
+                        <td>{{ boleta.fecha }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function aceptarPago(id) {
+        // Lógica para aceptar el pago
+        alert(`Pago ${id} aceptado`);
+    }
+
+    function rechazarPago(id) {
+        // Lógica para rechazar el pago
+        alert(`Pago ${id} rechazado`);
+    }
+
+    function openMiIndicadores() {
+        window.location.href = 'url_de_miindicadores';
+    }
+</script>
+{% endblock %}
+

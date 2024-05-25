@@ -1,0 +1,81 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block contenido_fh %}
+<!-- FORMULARIO DE CONTACTO -->
+<br><br><br>
+<h2 class="text-center mb-4">Formulario de Contacto</h2>
+<div class="custom-container">
+  <div class="row justify-content-center">
+    <div class="d-flex align-items-center col-md-6">
+      <form id="contactForm" action="" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre:</label>
+          <input type="text" class="form-control" id="nombre" name="nombre" required>
+        </div>
+        <div class="mb-3">
+          <label for="rut" class="form-label">Rut:</label>
+          <input type="text" class="form-control" id="rut" name="rut" required>
+        </div>
+        <div class="mb-3">
+          <label for="motivo" class="form-label">Motivo:</label>
+          <select class="form-select" id="motivo" name="motivo" required>
+            {% for key, value in form.fields.motivo.choices %}
+              <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="mensaje" class="form-label">Mensaje:</label>
+          <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+        </div>
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-dark btn-lg">Enviar</button>
+        </div>
+      </form>
+      <div class="mt-3 text-center">
+        {{ mensaje }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!--script-->
+{% block scripts %}
+<script>
+$(document).ready(function(){
+    // Función para enviar el formulario
+    $("#contactForm").submit(function(e){
+        e.preventDefault(); // Evitar que se recargue la página
+        
+        // Obtener los datos del formulario
+        var formData = $(this).serialize();
+
+        // Enviar los datos mediante AJAX
+        $.ajax({
+            type: "POST",
+            url: "", // La URL a la que se enviarán los datos
+            data: formData,
+            success: function(response) {
+                // Mostrar mensaje de éxito
+                $("#contactForm")[0].reset(); // Resetear el formulario
+                $(".alert").remove(); // Remover cualquier alerta existente
+                $('<div class="alert alert-success mt-3 text-center">Contacto guardado con éxito</div>').insertBefore("#contactForm");
+            },
+            error: function(response) {
+                // Mostrar mensaje de error
+                $(".alert").remove(); // Remover cualquier alerta existente
+                $('<div class="alert alert-danger mt-3 text-center">Hubo un error en el formulario</div>').insertBefore("#contactForm");
+            }
+        });
+    });
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+</body>
+</html>

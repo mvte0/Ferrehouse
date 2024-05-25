@@ -1,0 +1,105 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block contenido_fh %}
+<!--estilo-->
+<style>
+    .card-container {
+        margin-left: 20px; /* Ajusta el valor según lo desees */
+        margin-right: 20px; /* Ajusta el valor según lo desees */
+    }
+</style>
+
+<!--DETALLE DE PRODUCTO Y SUS TERMINOS-->
+<div class="row">
+    <div class="container mt-5">
+        <div class="row card-container" data-code="{{ producto.codigo }}">
+            <!-- Tarjeta del producto -->
+            <div class="col-md-6 mb-5">
+                <div class="card">
+                    {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="Producto" style="max-width: 300px; height: auto; margin: 0 auto;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="card-title">{{ producto.nombre }}</h2>
+                        <p class="card-text">{{ producto.descripcion }}</p>
+                        <p class="card-text" style="font-size: 1.2em; font-weight: bold;">${{ producto.precio | intcomma }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Segunda tarjeta -->
+            <div class="col-md-6 mx-auto mb-5">
+                <div class="card">
+                    <!-- Contenido de la segunda tarjeta -->
+                    <div class="card-body">
+                        <!-- Términos y condiciones -->
+                        <h5 class="card-title">Términos y condiciones</h5>
+                        <p class="card-text">Al acceder, aceptas nuestras políticas. Devoluciones válidas por 30 días. Garantizamos calidad y privacidad de datos.</p>
+
+                        <!-- Métodos de pago -->
+                        <h5 class="card-title">Métodos de pago</h5>
+                        <p class="card-text">Ofrecemos diversas opciones de pago para tu comodidad:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-cash"></i> Pago en efectivo al recibir el pedido</li>
+                            <li><i class="bi bi-credit-card"></i> Pago con tarjeta de crédito/débito</li>
+                        </ul>
+
+                        <!-- Cantidades a elegir -->
+                        <h5 class="card-title">Cantidades a elegir</h5>
+                        <p class="card-text">Selecciona la cantidad:</p>
+                        <select class="form-select mb-3 cantidad-producto">
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+
+                        <!-- Métodos de entrega -->
+                        <h5 class="card-title">Métodos de entrega</h5>
+                        <p class="card-text">Tenemos varias opciones para que recibas tu pedido:</p>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-truck"></i> Despacho a domicilio (entrega en 2-3 días hábiles) - Despacho gratis para pedidos superiores a $150.000</li>
+                            <li><i class="bi bi-shop"></i> Retiro en tienda (depende de stock de cada sucursal)</li> 
+                        </ul>
+
+                        <!-- Botón de compra -->
+                        <button class="btn btn-dark add-to-cart" data-id="{{ producto.id }}">Agregar al Carrito</button>
+
+                        <!-- Logos -->
+                        <div class="mt-3">
+                            <img src="{% static 'app/img/wp-g.png' %}" alt="Logo 1" class="me-2" style="height: 100px;">
+                            <!-- Agrega aquí otros logos si es necesario -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.add-to-cart').click(function() {
+        var productId = $(this).data('id');
+        var cantidad = $(this).siblings('.cantidad-producto').val();
+        $.post("{% url 'agregar_al_carrito' %}", {
+            producto_id: productId,
+            cantidad: cantidad,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        }).done(function() {
+            alert('Producto agregado al carrito.');
+        });
+    });
+});
+</script>
+{% endblock %}
