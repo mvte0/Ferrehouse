@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Pago</title>
+</head>
+<body>
+    <form action="{{ url_tbk }}" method="POST">
+        <input type="hidden" name="token_ws" value="{{ token_tbk }}">
+        <button type="submit">Pagar</button>
+    </form>
+</body>
+</html>

@@ -1,10 +1,38 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import requests 
+from django.conf import settings
 from django.utils import timezone
 from django.http import JsonResponse
 from .models import Producto, Contacto, Pedido, Cart, CartItem, Marca, Boleta
 from .forms import ContactoForm, ProductoForm, BoletaForm
 from django.contrib.auth.decorators import login_required
+from transbank.webpay.webpay_plus.transaction import Transaction
+
+def iniciar_pago(request):
+    buy_order = 'orden12345'  # Debe ser único por cada transacción
+    session_id = 'session12345'
+    amount = 10000  # Monto de la transacción
+    return_url = 'http://localhost:8000/pago/exito/'  # URL a donde será redirigido el usuario después del pago
+
+    tx = Transaction(webpay_plus_commons=settings.TRANSBANK_ENVIRONMENT)
+    response = tx.create(buy_order, session_id, amount, return_url)
+
+    return render(request, 'pago/iniciar.html', {
+        'url_tbk': response['url'],
+        'token_tbk': response['token']
+    })
+
+def pago_exito(request):
+    token = request.GET.get('token_ws')
+    tx = Transaction(webpay_plus_commons=settings.TRANSBANK_ENVIRONMENT)
+    response = tx.commit(token)
+
+    if response['response_code'] == 0:
+        # Pago exitoso
+        return render(request, 'pago/exito.html', {'response': response})
+    else:
+        # Error en el pago
+        return render(request, 'pago/error.html', {'response': response})
 
 # Create your views here.
 def index(request):
