@@ -14,10 +14,11 @@ def base(request):
     return render(request, 'app\base.html')
 
 #TIENDA
-def tienda(request): 
+def tienda(request):
     productos = Producto.objects.all()
+    print(productos)
     data = {
-        'productos' : productos
+        'productos': productos
     }
     return render(request, 'app/tienda.html', data)
 

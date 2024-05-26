@@ -55,7 +55,7 @@ class Pedido(models.Model):
         return f"{self.cliente} - {self.producto}"
     
 class Boleta(models.Model):
-    id_boleta = models.CharField(max_length=50)
+    id_boleta = models.CharField(max_length=50, primary_key=True)
     cliente = models.CharField(max_length=100)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
