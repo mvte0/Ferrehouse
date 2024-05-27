@@ -140,23 +140,23 @@
 {% load humanize %}
 {% if productos %}
   <div id="contenido-producto" class="productos-container">
-    {% for p in productos %}
+    {% for producto in productos %}
     <div class="producto">
         <div class="contenedor">
             <div class="desc">-47%</div>
             {% if p.imagen %}
-            <img src="{{ p.imagen.url }}" alt="Producto" class="producto-imagen">
+            <img src="{{ producto.imagen.url }}" alt="Producto" class="producto-imagen">
             {% endif %}
             <div class="detalle-producto">
-                <h5 class="marca">{{ p.marca.nombre|capfirst }}</h5>
-                <p class="codigo">{{ p.codigo }}</p>
-                <h3 class="titulo">{{ p.nombre }}</h3>
-                <h4 class="precio">${{ p.precio|intcomma }}</h4>
+                <h5 class="marca">{{ producto.marca.nombre|capfirst }}</h5>
+                <p class="codigo">{{ producto.codigo }}</p>
+                <h3 class="titulo">{{ producto.nombre }}</h3>
+                <h4 class="precio">${{ producto.precio|intcomma }}</h4>
             </div>
             <div class="text-center">
-                <a href="{% url 'producto' p.id %}" class="btn btn-dark">Ver Producto</a>
+                <a href="{% url 'producto' producto.id %}" class="btn btn-dark">Ver Producto</a>
                 <br>
-                <button class="btn btn-dark add-to-cart" data-id="{{ p.id }}">Agregar al Carrito</button>
+                <button class="btn btn-dark add-to-cart" data-id="{{ producto.id }}">Agregar al Carrito</button>
             </div>
         </div>
     </div>

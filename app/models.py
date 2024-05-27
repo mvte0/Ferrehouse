@@ -1,15 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User, AbstractUser
-
-#tablas base de datos
-class CustomUsuarios(AbstractUser):
-    role = models.CharField(max_length=50)
-
-class trabajadores(models.Model):
-    nombre = models.CharField(max_length=100)
-    posicion = models.CharField(max_length=100)
-    CustomUsuarios = models.ForeignKey(CustomUsuarios, on_delete=models.CASCADE)
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Marca(models.Model):

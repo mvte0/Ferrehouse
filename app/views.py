@@ -14,25 +14,25 @@ def iniciar_pago(request):
     amount = 10000  # Monto de la transacción
     return_url = 'http://localhost:8000/pago/exito/'  # URL a donde será redirigido el usuario después del pago
 
-    tx = Transaction(webpay_plus_commons=settings.TRANSBANK_ENVIRONMENT)
+    tx = Transaction()
     response = tx.create(buy_order, session_id, amount, return_url)
 
-    return render(request, 'pago/iniciar.html', {
+    return render(request, 'pago_iniciar.html', {
         'url_tbk': response['url'],
         'token_tbk': response['token']
     })
 
 def pago_exito(request):
     token = request.GET.get('token_ws')
-    tx = Transaction(webpay_plus_commons=settings.TRANSBANK_ENVIRONMENT)
+    tx = Transaction()
     response = tx.commit(token)
 
     if response['response_code'] == 0:
         # Pago exitoso
-        return render(request, 'pago/exito.html', {'response': response})
+        return render(request, 'pago_exito.html', {'response': response})
     else:
         # Error en el pago
-        return render(request, 'pago/error.html', {'response': response})
+        return render(request, 'pago_error.html', {'response': response})
 
 # Create your views here.
 def index(request):
@@ -44,7 +44,6 @@ def base(request):
 #TIENDA
 def tienda(request):
     productos = Producto.objects.all()
-    print(productos)
     data = {
         'productos': productos
     }

@@ -115,22 +115,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-#configuracion de la base de datos
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ferrehouse',  # Cambia esto por el nombre de tu base de datos
-        'USER': 'localhost',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
-#myproject/settings.py
-#usuario personbalizado
-AUTH_USER_MODEL = 'app.CustomUsuarios'
-
 #API TRANSBANK
 TRANSBANK_COMMERCE_CODE = '597055555532'
 TRANSBANK_API_KEY = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'
-TRANSBANK_ENVIRONMENT = 'INTEGRACION'  # Cambia a 'PRODUCCION' cuando estés listo
+TRANSBANK_ENVIRONMENT = 'PRODUCCION'  # Cambia a 'PRODUCCION' cuando estés listo
