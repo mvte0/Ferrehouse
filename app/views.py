@@ -8,33 +8,42 @@ from .forms import ContactoForm, ProductoForm, BoletaForm
 from django.contrib.auth.decorators import login_required
 from transbank.webpay.webpay_plus.transaction import Transaction
 
-def iniciar_pago(request):
-    buy_order = 'orden12345'  # Debe ser único por cada transacción
-    session_id = 'session12345'
-    amount = 10000  # Monto de la transacción
-    return_url = 'http://localhost:8000/pago/exito/'  # URL a donde será redirigido el usuario después del pago
 
+def pago_iniciar(request):
+    # Obtén el carrito del usuario con estado 'pendiente'
+    cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
+    carrito = CartItem.objects.filter(cart=cart)
+    
+    # Calcula el total del carrito
+    total = sum(item.producto.precio * item.cantidad for item in carrito)
+    
+    # Configura la transacción de Webpay
     tx = Transaction()
-    response = tx.create(buy_order, session_id, amount, return_url)
+    response = tx.create(
+        buy_order=str(request.user.id) + str(carrito.first().id),
+        session_id=str(request.user.id),
+        amount=total,
+        return_url='http://127.0.0.1:8000/pago_exito/'
+    )
+    
+    # Redirige al usuario a la URL de pago de Webpay
+    return redirect(response['url'] + '?token_ws=' + response['token'])
 
-    return render(request, 'pago_iniciar.html', {
-        'url_tbk': response['url'],
-        'token_tbk': response['token']
-    })
-
+# views.py
 def pago_exito(request):
     token = request.GET.get('token_ws')
     tx = Transaction()
     response = tx.commit(token)
-
-    if response['response_code'] == 0:
-        # Pago exitoso
-        return render(request, 'pago_exito.html', {'response': response})
+    
+    if response['response_code'] == 0:  # Transacción exitosa
+        carrito = CartItem.objects.filter(cart__user=request.user, cart__estado='pendiente')
+        carrito.update(cart__estado='pagado')  # Marca el carrito como pagado
+        # Puedes añadir lógica adicional aquí, como enviar un email de confirmación
+        
+        return render(request, 'app/pago_exito.html', {'response': response})
     else:
-        # Error en el pago
-        return render(request, 'pago_error.html', {'response': response})
+        return render(request, 'app/pago_error.html', {'response': response})
 
-# Create your views here.
 def index(request):
     return render(request, 'app/index.html')
 
@@ -42,12 +51,12 @@ def base(request):
     return render(request, 'app\base.html')
 
 #TIENDA
-def tienda(request):
+def tienda1(request):
     productos = Producto.objects.all()
     data = {
         'productos': productos
     }
-    return render(request, 'app/tienda.html', data)
+    return render(request, 'app/tienda1.html', data)
 
 def producto(request, producto_id): 
     producto = get_object_or_404(Producto, id=producto_id)
@@ -94,18 +103,15 @@ def actualizar_carrito(request):
 
 @login_required
 def carrito(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
+    cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
     cart_items = CartItem.objects.filter(cart=cart)
     
     total_price = 0
     for item in cart_items:
-        item.total_price = item.producto.precio * item.quantity
+        item.total_price = item.producto.precio * item.cantidad  
         total_price += item.total_price
-    
-    return render(request, 'app/carrito.html', {
-        'cart_items': cart_items,
-        'total_price': total_price,
-    })
+
+    return render(request, 'app/carrito.html', {'cart_items': cart_items, 'total_price': total_price})
 
 #INFO
 def contacto(request):
@@ -182,7 +188,15 @@ def bodeguero(request):
     })
 
 def contador(request):
-    return render(request, 'app/CRUD/contador.html')
+    if request.method == 'POST':
+        form = BoletaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ingreso_boletas')
+    else:
+        form = BoletaForm()
+    boletas = Boleta.objects.all()
+    return render(request, 'app/CRUD/contador.html', {'form': form, 'boletas': boletas})
 
 def ingreso_boletas(request):
     if request.method == 'POST':
@@ -193,7 +207,7 @@ def ingreso_boletas(request):
     else:
         form = BoletaForm()
     boletas = Boleta.objects.all()
-    return render(request, 'ingreso_boletas.html', {'form': form, 'boletas': boletas})
+    return render(request, 'app/CRUD/contador.html', {'form': form, 'boletas': boletas})
 
 #APIS
 def indicadores(request):

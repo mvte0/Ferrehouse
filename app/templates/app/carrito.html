@@ -28,7 +28,7 @@
                   <td>
                       <div class="input-group">
                           <button class="btn btn-outline-secondary btn-sm decrease-quantity">-</button>
-                          <input type="text" class="form-control text-center cart-quantity" value="{{ item.quantity }}" readonly style="max-width: 50px;">
+                          <input type="text" class="form-control text-center cart-quantity" value="{{ item.cantidad }}" readonly style="max-width: 50px;">
                           <button class="btn btn-outline-secondary btn-sm increase-quantity">+</button>
                       </div>
                   </td>
@@ -61,7 +61,7 @@
   
       <!-- Botón de pagar -->
       <div class="text-right mt-4">
-          <a href="{% url 'iniciar_pago' %}" class="btn btn-dark" id="pay-button">Pagar</a>
+          <a href="{% url 'pago_iniciar' %}" class="btn btn-dark" id="pay-button">Pagar</a>
       </div>
     </div>
 

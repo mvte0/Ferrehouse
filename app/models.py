@@ -14,7 +14,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=50)
     codigo = models.IntegerField()
     descripcion = models.TextField()
-    precio = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
     imagen = models.ImageField(upload_to="producto", null=True)
     
     def __str__(self):
@@ -22,13 +22,13 @@ class Producto(models.Model):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    estado = models.CharField(max_length=10, choices=[('pendiente', 'Pendiente'), ('pagado', 'Pagado')])
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+    cantidad = models.PositiveIntegerField(default=1)
     added_at = models.DateTimeField(auto_now_add=True)
 
 opciones_motivos = [
@@ -56,12 +56,12 @@ class Pedido(models.Model):
         return f"{self.cliente} - {self.producto}"
     
 class Boleta(models.Model):
-    id_boleta = models.CharField(max_length=50, primary_key=True)
+    id_boleta = models.CharField(max_length=50, unique=True,  primary_key=True)
     cliente = models.CharField(max_length=100)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
 
     def __str__(self):
-        return self.id_boleta
+        return f'{self.id_boleta} - {self.cliente}'
     
     

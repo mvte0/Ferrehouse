@@ -1,13 +1,14 @@
+<!-- pago_iniciar.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Pago</title>
+    <title>Pagar con Transbank</title>
 </head>
 <body>
-    <form action="{{ url_tbk }}" method="POST">
-        <input type="hidden" name="token_ws" value="{{ token_tbk }}">
+    <h1>Total a Pagar: ${{ total|intcomma }}</h1>
+    <form method="post" action="{{ response.url }}">
+        <input type="hidden" name="token_ws" value="{{ response.token }}">
         <button type="submit">Pagar</button>
     </form>
 </body>
