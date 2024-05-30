@@ -11,7 +11,8 @@
                     <div class="card-body">
                         <h2 class="text-center">Iniciar Sesión</h2>
                         <div class="d-flex justify-content-center align-items-center"> <!-- Contenedor centrado -->
-                            <form action="#" method="post">
+                            <form action="{% url 'login' %}" method="post">
+                                {% csrf_token %}
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Usuario:</label>
                                     <input type="text" id="username" name="username" class="form-control" required>
@@ -26,7 +27,9 @@
                             </form>
                         </div>
                         <div class="text-center mt-3">
-                            <a href="{% url 'registro' %}" class="btn btn-link btn-sm">¿Eres cliente y no tienes cuenta?, Registrate</a>
+                            <a href="{% url 'customer_signup' %}" class="btn btn-link btn-sm">¿Eres cliente y no tienes cuenta?, Registrate</a>
+                            <br>
+                            <a href="{% url 'employee_signup' %}" class="btn btn-link btn-sm">¿Eres empleado y no tienes cuenta?, Registrate</a>
                             <br>
                             <a href="{% url 'recuperarcontraseña' %}" class="btn btn-link btn-sm">¿Olvidaste tu contraseña?</a>
                             <br>

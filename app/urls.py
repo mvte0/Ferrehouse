@@ -1,5 +1,7 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
+from .views import CustomerSignUpView, EmployeeSignUpView
 
 urlpatterns = [
     path('index/', views.index, name="index"),
@@ -13,7 +15,6 @@ urlpatterns = [
     path('nosotros/', views.nosotros, name="nosotros"),
     path('producto/<int:producto_id>/', views.producto, name="producto"),
     path('recuperarcontraseña/', views.recuperarcontraseña, name="recuperarcontraseña"),
-    path('registro/', views.registro, name="registro"),
     path('tienda1/', views.tienda1, name="tienda"),
     path('contador/', views.contador, name="contador"),
     path('bodeguero/', views.bodeguero, name="bodeguero"),
@@ -21,4 +22,6 @@ urlpatterns = [
     path('ingreso_boletas/', views.ingreso_boletas, name='ingreso_boletas'),
     path('pago_iniciar/', views.pago_iniciar, name='pago_iniciar'),
     path('pago_exito/', views.pago_exito, name='pago_exito'),
+    path('customer_signup/', CustomerSignUpView.as_view(), name='customer_signup'),
+    path('employee_signup/', EmployeeSignUpView.as_view(), name='employee_signup'),
 ]

@@ -1,4 +1,3 @@
-<!-- pago_exito.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,6 +8,8 @@
     <h1>¡Pago Exitoso!</h1>
     <p>Su pago ha sido realizado con éxito. Muchas gracias por su compra en Ferrehouse.</p>
     <p>ID de la transacción: {{ response.transaction_id }}</p>
+    {% load humanize %}
     <p>Total pagado: ${{ response.amount|intcomma }}</p>
 </body>
 </html>
+

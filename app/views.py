@@ -1,14 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 import requests 
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
 from django.conf import settings
 from django.utils import timezone
 from django.http import JsonResponse
 from .models import Producto, Contacto, Pedido, Cart, CartItem, Marca, Boleta
-from .forms import ContactoForm, ProductoForm, BoletaForm
+from .forms import ContactoForm, ProductoForm, BoletaForm, CustomerCreationForm, EmployeeCreationForm
 from django.contrib.auth.decorators import login_required
 from transbank.webpay.webpay_plus.transaction import Transaction
 
-
+#api transbank
 def pago_iniciar(request):
     # Obtén el carrito del usuario con estado 'pendiente'
     cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
@@ -29,21 +31,29 @@ def pago_iniciar(request):
     # Redirige al usuario a la URL de pago de Webpay
     return redirect(response['url'] + '?token_ws=' + response['token'])
 
-# views.py
+@login_required
 def pago_exito(request):
     token = request.GET.get('token_ws')
     tx = Transaction()
     response = tx.commit(token)
     
     if response['response_code'] == 0:  # Transacción exitosa
-        carrito = CartItem.objects.filter(cart__user=request.user, cart__estado='pendiente')
-        carrito.update(cart__estado='pagado')  # Marca el carrito como pagado
-        # Puedes añadir lógica adicional aquí, como enviar un email de confirmación
+        # Obtén el carrito pendiente del usuario
+        carrito = Cart.objects.filter(user=request.user, estado='pendiente').first()
+        if carrito:
+            # Actualiza el estado del carrito
+            carrito.estado = 'pagado'
+            carrito.save()
+        
+        # Obtén todos los ítems del carrito y realiza cualquier acción adicional necesaria
+        cart_items = CartItem.objects.filter(cart=carrito)
+        # Aquí puedes añadir lógica adicional, como enviar un email de confirmación
         
         return render(request, 'app/pago_exito.html', {'response': response})
     else:
         return render(request, 'app/pago_error.html', {'response': response})
 
+#inicio
 def index(request):
     return render(request, 'app/index.html')
 
@@ -208,6 +218,16 @@ def ingreso_boletas(request):
         form = BoletaForm()
     boletas = Boleta.objects.all()
     return render(request, 'app/CRUD/contador.html', {'form': form, 'boletas': boletas})
+
+class CustomerSignUpView(CreateView):
+    form_class = CustomerCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'app/customer_signup.html'
+    
+class EmployeeSignUpView(CreateView):
+    form_class = EmployeeCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'app/employee_signup.html'
 
 #APIS
 def indicadores(request):

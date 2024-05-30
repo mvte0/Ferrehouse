@@ -116,6 +116,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 #API TRANSBANK
-TRANSBANK_COMMERCE_CODE = '597055555532'
-TRANSBANK_API_KEY = '579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C'
+TRANSBANK_COMMERCE_CODE = '28299257'
+TRANSBANK_API_KEY = 'cxxXQgGD9vrVe4M41FIt'
 TRANSBANK_ENVIRONMENT = 'PRODUCCION'  # Cambia a 'PRODUCCION' cuando estés listo
+
+LOGIN_REDIRECT_URL = 'home'  # Cambia 'home' por el nombre de la URL a la que quieras redirigir después de iniciar sesión
+LOGOUT_REDIRECT_URL = 'login'  # Cambia 'login' por el nombre de la URL a la que quieras redirigir después de cerrar sesión
+
+
