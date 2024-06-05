@@ -1,334 +1,341 @@
 {% extends "app/base.html" %}
 {% load static %}
 
-    {% block contenido_fh %}
-    <style>
-        body {
-            background-color: #f4f4f4;
-        }
+{% block contenido_fh %}
+<style>
+    body {
+        background-color: #f4f4f4;
+    }
 
-        .container-bodeguero {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    .container-bodeguero {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-        .header img {
-            border-radius: 50%;
-        }
+    .header img {
+        border-radius: 50%;
+    }
 
-        .header .user-info {
-            margin-left: 20px;
-        }
+    .header .user-info {
+        margin-left: 20px;
+    }
 
-        .header .user-info h1, .header .user-info p {
-            margin: 0;
-        }
+    .header .user-info h1, .header .user-info p {
+        margin: 0;
+    }
 
-        .btn-modify {
-            background-color: #007bff;
-            color: #fff;
-        }
+    .btn-modify {
+        background-color: #007bff;
+        color: #fff;
+    }
 
-        .btn-accept {
-            background-color: #28a745;
-            color: #fff;
-        }
+    .btn-accept {
+        background-color: #28a745;
+        color: #fff;
+    }
 
-        .btn-cancel {
-            background-color: #dc3545;
-            color: #fff;
-        }
+    .btn-cancel {
+        background-color: #dc3545;
+        color: #fff;
+    }
 
-        .pagination .page-link {
-            color: #333;
-        }
+    .pagination .page-link {
+        color: #333;
+    }
 
-        .pagination .active .page-link {
-            background-color: #333;
-            border-color: #333;
-            color: #fff;
-        }
+    .pagination .active .page-link {
+        background-color: #333;
+        border-color: #333;
+        color: #fff;
+    }
 
-        .modal-centered .modal-dialog {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-centered .modal-content {
-            width: 100%;
-            max-width: 500px;
-        }
-    </style>
-
-    <div class="container-bodeguero">
-        <div class="d-flex align-items-center header mb-4">
-            <img src="https://via.placeholder.com/100" alt="Imagen del usuario" width="100" height="100">
-            <div class="user-info">
-                <h1>Mario Hugo</h1>
-                <p>Bodeguero</p>
-                <p>ID: 00018</p>
-            </div>
-        </div>
-        <div class="d-flex justify-content-between mb-4">
-            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addModal">Agregar Producto</button>
-        </div>
-        <div class="table-responsive mb-4">
-            <div class="section-background">
-                <h1 style="text-align:center; font-size:2em;">Pedidos</h1>
-            </div>
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre cliente</th>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Modificar</th>
-                        <th>Estado del Pedido</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for pedido in pedidos %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ pedido.cliente }}</td>
-                        <td>{{ pedido.producto }}</td>
-                        <td>${{ pedido.precio }}</td>
-                        <td><button class="btn btn-modify">Modificar</button></td>
-                        <td>
-                            <button class="btn btn-accept">Aceptar</button>
-                            <button class="btn btn-cancel">Cancelar</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="table-responsive">
-            <div class="section-background">
-                <h1 style="text-align:center; font-size:2em;">Productos</h1>
-            </div>
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Marca</th>
-                        <th>Precio</th>
-                        <th>Modificar</th>
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.marca.nombre }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>
-                            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editModal"
-                                data-id="{{ producto.id }}"
-                                data-nombre="{{ producto.nombre }}"
-                                data-marca="{{ producto.marca.id }}"
-                                data-precio="{{ producto.precio }}"
-                                data-codigo="{{ producto.codigo }}"
-                                data-descripcion="{{ producto.descripcion }}">Modificar</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ producto.id }}">Eliminar</button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; Anterior</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">Siguiente &raquo;</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    .modal-centered .modal-dialog {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     
-    <!-- Modal para agregar producto -->
-    <div class="modal fade modal-centered" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="add-product" value="add-product">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Agregar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="add_nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="add_nombre" name="nombre">
-                    </div>
-                    <div class="mb-3">
-                        <label for="add_marca" class="form-label">Marca</label>
-                        <select class="form-control" id="add_marca" name="marca">
-                            {% for marca in marcas %}
-                            <option value="{{ marca.id }}">{{ marca.nombre }}</option>
+    .modal-centered .modal-content {
+        width: 100%;
+        max-width: 500px;
+    }
+</style>
+
+<div class="container-bodeguero">
+    <div class="d-flex align-items-center header mb-4">
+        <img src="https://via.placeholder.com/100" alt="Imagen del usuario" width="100" height="100">
+        <div class="user-info">
+            <h1>Mario Hugo</h1>
+            <p>Bodeguero</p>
+            <p>ID: 00018</p>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between mb-4">
+        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addModal">Agregar Producto</button>
+    </div>
+    <div class="table-responsive mb-4">
+        <div class="section-background">
+            <h1 style="text-align:center; font-size:2em;">Pedidos</h1>
+        </div>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre cliente</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Modificar</th>
+                    <th>Estado del Pedido</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedido %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ pedido.user.username }}</td>
+                    <td>
+                        <ul>
+                            {% for item in pedido.pedidoitem_set.all %}
+                            <li>{{ item.producto.nombre }} ({{ item.cantidad }})</li>
                             {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="add_precio" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="add_precio" name="precio">
-                    </div>
-                    <div class="mb-3">
-                        <label for="add_codigo" class="form-label">Código</label>
-                        <input type="number" class="form-control" id="add_codigo" name="codigo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="add_descripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="add_descripcion" name="descripcion"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="add_imagen" class="form-label">Imagen</label>
-                        <input type="file" class="form-control" id="add_imagen" name="imagen">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Producto</button>
-                </div>
-            </form>
+                        </ul>
+                    </td>
+                    <td>${{ pedido.total }}</td>
+                    <td><button class="btn btn-modify">Modificar</button></td>
+                    <td>
+                        <button class="btn btn-accept">Aceptar</button>
+                        <button class="btn btn-cancel">Cancelar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="table-responsive">
+        <div class="section-background">
+            <h1 style="text-align:center; font-size:2em;">Productos</h1>
         </div>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Precio</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.marca.nombre }}</td>
+                    <td>${{ producto.precio }}</td>
+                    <td>
+                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editModal"
+                            data-id="{{ producto.id }}"
+                            data-nombre="{{ producto.nombre }}"
+                            data-marca="{{ producto.marca.id }}"
+                            data-precio="{{ producto.precio }}"
+                            data-codigo="{{ producto.codigo }}"
+                            data-descripcion="{{ producto.descripcion }}">Modificar</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ producto.id }}">Eliminar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; Anterior</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Siguiente &raquo;</a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
-    <!-- Modal para modificar producto -->
-    <div class="modal fade modal-centered" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="edit-product" value="edit-product">
-                <input type="hidden" name="edit_producto_id" id="edit_producto_id">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Modificar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Modal para agregar producto -->
+<div class="modal fade modal-centered" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="add-product" value="add-product">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Agregar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="add_nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="add_nombre" name="nombre">
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="edit_nombre" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="edit_nombre" name="nombre">
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_marca" class="form-label">Marca</label>
-                        <select class="form-control" id="edit_marca" name="marca">
-                            {% for marca in marcas %}
-                            <option value="{{ marca.id }}">{{ marca.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_precio" class="form-label">Precio</label>
-                        <input type="number" class="form-control" id="edit_precio" name="precio">
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_codigo" class="form-label">Código</label>
-                        <input type="number" class="form-control" id="edit_codigo" name="codigo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_descripcion" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="edit_descripcion" name="descripcion"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_imagen" class="form-label">Imagen</label>
-                        <input type="file" class="form-control" id="edit_imagen" name="imagen">
-                    </div>
+                <div class="mb-3">
+                    <label for="add_marca" class="form-label">Marca</label>
+                    <select class="form-control" id="add_marca" name="marca">
+                        {% for marca in marcas %}
+                        <option value="{{ marca.id }}">{{ marca.nombre }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                <div class="mb-3">
+                    <label for="add_precio" class="form-label">Precio</label>
+                    <input type="number" class="form-control" id="add_precio" name="precio">
                 </div>
-            </form>
-        </div>
+                <div class="mb-3">
+                    <label for="add_codigo" class="form-label">Código</label>
+                    <input type="number" class="form-control" id="add_codigo" name="codigo">
+                </div>
+                <div class="mb-3">
+                    <label for="add_descripcion" class="form-label">Descripción</label>
+                    <textarea class="form-control" id="add_descripcion" name="descripcion"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="add_imagen" class="form-label">Imagen</label>
+                    <input type="file" class="form-control" id="add_imagen" name="imagen">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary">Guardar Producto</button>
+            </div>
+        </form>
     </div>
-    </div>
-    
-    <!-- Modal para eliminar producto -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+</div>
+</div>
+
+<!-- Modal para modificar producto -->
+<div class="modal fade modal-centered" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="delete-product" value="delete-product">
-                <input type="hidden" name="delete_producto_id" id="delete_producto_id">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Eliminar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="edit-product" value="edit-product">
+            <input type="hidden" name="edit_producto_id" id="edit_producto_id">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Modificar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="edit_nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="edit_nombre" name="nombre">
                 </div>
-                <div class="modal-body">
-                    <p>¿Está seguro que desea eliminar este producto?</p>
+                <div class="mb-3">
+                    <label for="edit_marca" class="form-label">Marca</label>
+                    <select class="form-control" id="edit_marca" name="marca">
+                        {% for marca in marcas %}
+                        <option value="{{ marca.id }}">{{ marca.nombre }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                <div class="mb-3">
+                    <label for="edit_precio" class="form-label">Precio</label>
+                    <input type="number" class="form-control" id="edit_precio" name="precio">
                 </div>
-            </form>
-        </div>
+                <div class="mb-3">
+                    <label for="edit_codigo" class="form-label">Código</label>
+                    <input type="number" class="form-control" id="edit_codigo" name="codigo">
+                </div>
+                <div class="mb-3">
+                    <label for="edit_descripcion" class="form-label">Descripción</label>
+                    <textarea class="form-control" id="edit_descripcion" name="descripcion"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="edit_imagen" class="form-label">Imagen</label>
+                    <input type="file" class="form-control" id="edit_imagen" name="imagen">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            </div>
+        </form>
     </div>
-    </div>
-    {% endblock %}
-    
-    {% block scripts %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function(event) {
-                var button = event.relatedTarget;
-                var productoId = button.getAttribute('data-id');
-                var inputProductoId = document.getElementById('delete_producto_id');
-                inputProductoId.value = productoId;
-            });
+</div>
+</div>
 
-            var editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function(event) {
+<!-- Modal para eliminar producto -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="delete-product" value="delete-product">
+            <input type="hidden" name="delete_producto_id" id="delete_producto_id">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea eliminar este producto?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function(event) {
             var button = event.relatedTarget;
             var productoId = button.getAttribute('data-id');
-            var nombre = button.getAttribute('data-nombre');
-            var marca = button.getAttribute('data-marca');
-            var precio = button.getAttribute('data-precio');
-            var codigo = button.getAttribute('data-codigo');
-            var descripcion = button.getAttribute('data-descripcion');
-
-            console.log("Producto ID:", productoId);
-            console.log("Nombre:", nombre);
-            console.log("Marca:", marca);
-            console.log("Precio:", precio);
-            console.log("Código:", codigo);
-            console.log("Descripción:", descripcion);
-
-            var inputProductoId = document.getElementById('edit_producto_id');
-            var inputNombre = document.getElementById('edit_nombre');
-            var inputMarca = document.getElementById('edit_marca');
-            var inputPrecio = document.getElementById('edit_precio');
-            var inputCodigo = document.getElementById('edit_codigo');
-            var inputDescripcion = document.getElementById('edit_descripcion');
-
+            var inputProductoId = document.getElementById('delete_producto_id');
             inputProductoId.value = productoId;
-            inputNombre.value = nombre;
-            inputMarca.value = marca;
-            inputPrecio.value = precio;
-            inputCodigo.value = codigo;
-            inputDescripcion.value = descripcion;
         });
-        });
-    </script> 
-    {% endblock %}
+
+        var editModal = document.getElementById('editModal');
+    editModal.addEventListener('show.bs.modal', function(event) {
+        var button = event.relatedTarget;
+        var productoId = button.getAttribute('data-id');
+        var nombre = button.getAttribute('data-nombre');
+        var marca = button.getAttribute('data-marca');
+        var precio = button.getAttribute('data-precio');
+        var codigo = button.getAttribute('data-codigo');
+        var descripcion = button.getAttribute('data-descripcion');
+
+        console.log("Producto ID:", productoId);
+        console.log("Nombre:", nombre);
+        console.log("Marca:", marca);
+        console.log("Precio:", precio);
+        console.log("Código:", codigo);
+        console.log("Descripción:", descripcion);
+
+        var inputProductoId = document.getElementById('edit_producto_id');
+        var inputNombre = document.getElementById('edit_nombre');
+        var inputMarca = document.getElementById('edit_marca');
+        var inputPrecio = document.getElementById('edit_precio');
+        var inputCodigo = document.getElementById('edit_codigo');
+        var inputDescripcion = document.getElementById('edit_descripcion');
+
+        inputProductoId.value = productoId;
+        inputNombre.value = nombre;
+        inputMarca.value = marca;
+        inputPrecio.value = precio;
+        inputCodigo.value = codigo;
+        inputDescripcion.value = descripcion;
+    });
+    });
+</script>
+{% endblock %}

@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -46,15 +46,15 @@ ROOT_URLCONF = "ferrehouse.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'templates')],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'app/templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },
@@ -119,6 +119,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 TRANSBANK_COMMERCE_CODE = '28299257'
 TRANSBANK_API_KEY = 'cxxXQgGD9vrVe4M41FIt'
 TRANSBANK_ENVIRONMENT = 'PRODUCCION'  # Cambia a 'PRODUCCION' cuando estés listo
+
 
 LOGIN_REDIRECT_URL = 'home'  # Cambia 'home' por el nombre de la URL a la que quieras redirigir después de iniciar sesión
 LOGOUT_REDIRECT_URL = 'login'  # Cambia 'login' por el nombre de la URL a la que quieras redirigir después de cerrar sesión

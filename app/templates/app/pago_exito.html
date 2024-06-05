@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Pago Exitoso</title>
+    <!-- Añadir Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>¡Pago Exitoso!</h1>
-    <p>Su pago ha sido realizado con éxito. Muchas gracias por su compra en Ferrehouse.</p>
-    <p>ID de la transacción: {{ response.transaction_id }}</p>
-    {% load humanize %}
-    <p>Total pagado: ${{ response.amount|intcomma }}</p>
+<body class="container mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h1 class="card-title">¡Pago Exitoso!</h1>
+            <p class="card-text">Su pago ha sido realizado con éxito. Muchas gracias por su compra en Ferrehouse.</p>
+            <p class="card-text">ID de la transacción: {{ transaction_id }}</p>
+            {% load humanize %}
+            <p class="card-text">Total pagado: ${{ response.amount|intcomma }}</p>
+
+            <!-- Botón para descargar la boleta -->
+            {% if transaction_id %}
+            <a href="{% url 'descargar_boleta' transaction_id %}" class="btn btn-dark">Descargar Boleta</a>
+            {% endif %}
+
+            <!-- Botón para redirigir a la página de inicio -->
+            <a href="{% url 'index' %}" class="btn btn-dark">Volver al Inicio</a>
+        </div>
+    </div>
+
+    <!-- Añadir Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
-

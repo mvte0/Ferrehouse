@@ -4,54 +4,11 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.conf import settings
 from django.utils import timezone
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import Producto, Contacto, Pedido, Cart, CartItem, Marca, Boleta
-from .forms import ContactoForm, ProductoForm, BoletaForm, CustomerCreationForm, EmployeeCreationForm
+from .forms import ContactoForm, ProductoForm, BoletaForm
 from django.contrib.auth.decorators import login_required
 from transbank.webpay.webpay_plus.transaction import Transaction
-
-#api transbank
-def pago_iniciar(request):
-    # Obtén el carrito del usuario con estado 'pendiente'
-    cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
-    carrito = CartItem.objects.filter(cart=cart)
-    
-    # Calcula el total del carrito
-    total = sum(item.producto.precio * item.cantidad for item in carrito)
-    
-    # Configura la transacción de Webpay
-    tx = Transaction()
-    response = tx.create(
-        buy_order=str(request.user.id) + str(carrito.first().id),
-        session_id=str(request.user.id),
-        amount=total,
-        return_url='http://127.0.0.1:8000/pago_exito/'
-    )
-    
-    # Redirige al usuario a la URL de pago de Webpay
-    return redirect(response['url'] + '?token_ws=' + response['token'])
-
-@login_required
-def pago_exito(request):
-    token = request.GET.get('token_ws')
-    tx = Transaction()
-    response = tx.commit(token)
-    
-    if response['response_code'] == 0:  # Transacción exitosa
-        # Obtén el carrito pendiente del usuario
-        carrito = Cart.objects.filter(user=request.user, estado='pendiente').first()
-        if carrito:
-            # Actualiza el estado del carrito
-            carrito.estado = 'pagado'
-            carrito.save()
-        
-        # Obtén todos los ítems del carrito y realiza cualquier acción adicional necesaria
-        cart_items = CartItem.objects.filter(cart=carrito)
-        # Aquí puedes añadir lógica adicional, como enviar un email de confirmación
-        
-        return render(request, 'app/pago_exito.html', {'response': response})
-    else:
-        return render(request, 'app/pago_error.html', {'response': response})
 
 #inicio
 def index(request):
@@ -76,52 +33,44 @@ def producto(request, producto_id):
     return render(request, 'app/producto.html', data)
 
 #CARRO DE COMPRA
-@login_required
-def agregar_al_carrito(request):
-    producto_id = request.POST.get('producto_id')
-    cantidad = int(request.POST.get('cantidad', 1))
-    producto = get_object_or_404(Producto, id=producto_id)
-
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, producto=producto)
-    
-    if not created:
-        cart_item.quantity += cantidad
-    else:
-        cart_item.quantity = cantidad
-    cart_item.save()
-    
-    return JsonResponse({'status': 'ok'})
-
-@login_required
-def eliminar_del_carrito(request):
-    cart_item_id = request.POST.get('cart_item_id')
-    cart_item = get_object_or_404(CartItem, id=cart_item_id)
-    cart_item.delete()
-    
-    return JsonResponse({'status': 'ok'})
-
-@login_required
-def actualizar_carrito(request):
-    cart_item_id = request.POST.get('cart_item_id')
-    cantidad = int(request.POST.get('cantidad'))
-    cart_item = get_object_or_404(CartItem, id=cart_item_id)
-    cart_item.quantity = cantidad
-    cart_item.save()
-    
-    return JsonResponse({'status': 'ok'})
-
-@login_required
-def carrito(request):
+def carrito(request, error=None):
     cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
     cart_items = CartItem.objects.filter(cart=cart)
-    
-    total_price = 0
-    for item in cart_items:
-        item.total_price = item.producto.precio * item.cantidad  
-        total_price += item.total_price
+    total_price = sum(item.producto.precio * item.cantidad for item in cart_items)
+    return render(request, 'app/carrito.html', {'cart_items': cart_items, 'total_price': total_price, 'error': error})
 
-    return render(request, 'app/carrito.html', {'cart_items': cart_items, 'total_price': total_price})
+def agregar_al_carrito(request):
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto_id')
+        cantidad = int(request.POST.get('cantidad', 1))
+        producto = get_object_or_404(Producto, id=producto_id)
+        
+        cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, producto=producto)
+        
+        if not created:
+            cart_item.cantidad += cantidad
+        else:
+            cart_item.cantidad = cantidad
+        cart_item.save()
+        
+        return redirect('carrito')
+
+def eliminar_del_carrito(request):
+    if request.method == 'POST':
+        cart_item_id = request.POST.get('cart_item_id')
+        cart_item = get_object_or_404(CartItem, id=cart_item_id)
+        cart_item.delete()
+        return JsonResponse({'status': 'ok', 'message': 'Producto eliminado del carrito'})
+
+def actualizar_carrito(request):
+    if request.method == 'POST':
+        cart_item_id = request.POST.get('cart_item_id')
+        cantidad = int(request.POST.get('cantidad'))
+        cart_item = get_object_or_404(CartItem, id=cart_item_id)
+        cart_item.cantidad = cantidad
+        cart_item.save()
+        return JsonResponse({'status': 'ok', 'message': 'Cantidad actualizada'})
 
 #INFO
 def contacto(request):
@@ -202,7 +151,7 @@ def contador(request):
         form = BoletaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('ingreso_boletas')
+            return redirect('contador')
     else:
         form = BoletaForm()
     boletas = Boleta.objects.all()
@@ -213,22 +162,66 @@ def ingreso_boletas(request):
         form = BoletaForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('ingreso_boletas')
+            return redirect('contador')
     else:
         form = BoletaForm()
-    boletas = Boleta.objects.all()
-    return render(request, 'app/CRUD/contador.html', {'form': form, 'boletas': boletas})
+    return render(request, 'app/CRUD/contador.html', {'form': form})
 
-class CustomerSignUpView(CreateView):
-    form_class = CustomerCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'app/customer_signup.html'
+# API Transbank
+@login_required
+def pago_iniciar(request):
+    # Obtén el carrito del usuario con estado 'pendiente'
+    cart, created = Cart.objects.get_or_create(user=request.user, estado='pendiente')
+    carrito = CartItem.objects.filter(cart=cart)
     
-class EmployeeSignUpView(CreateView):
-    form_class = EmployeeCreationForm
-    success_url = reverse_lazy('login')
-    template_name = 'app/employee_signup.html'
+    # Calcula el total del carrito
+    total = sum(item.producto.precio * item.cantidad for item in carrito)
+    
+    # Configura la transacción de Webpay
+    tx = Transaction()
+    response = tx.create(
+        buy_order=str(request.user.id) + str(carrito.first().id),
+        session_id=request.session.session_key,
+        amount=total,
+        return_url="http://127.0.0.1:8000/pago_exito/"
+    )
+    
+    if request.method == 'POST':
+        # Crear el pedido después de confirmar el pago
+        pedido = Pedido.objects.create(user=request.user, total=total)
+        for item in carrito:
+            PedidoItem.objects.create(
+                pedido=pedido,
+                producto=item.producto,
+                cantidad=item.cantidad,
+                precio=item.producto.precio
+            )
+        cart.estado = 'completado'
+        cart.save()
+        return redirect('pago_exito')
 
+    return render(request, 'app/pago_iniciar.html', {'response': response, 'total': total})
+
+def pago_exito(request):
+    token = request.GET.get('token_ws')
+    tx = Transaction()
+    response = tx.commit(token)
+    
+    if response['response_code'] == 0:  # Transacción exitosa
+        # Obtén el carrito pendiente del usuario
+        carrito = Cart.objects.filter(user=request.user, estado='pendiente').first()
+        if carrito:
+            # Actualiza el estado del carrito
+            carrito.estado = 'pagado'
+            carrito.save()
+        
+        # Obtén todos los ítems del carrito y realiza cualquier acción adicional necesaria
+        cart_items = CartItem.objects.filter(cart=carrito)
+        # Aquí puedes añadir lógica adicional, como enviar un email de confirmación
+        
+        return render(request, 'app/pago_exito.html', {'response': response})
+    else:
+        return render(request, 'app/pago_error.html', {'response': response})
 #APIS
 def indicadores(request):
     try:

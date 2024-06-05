@@ -88,18 +88,24 @@
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function() {
-    $('.add-to-cart').click(function() {
-        var productId = $(this).data('id');
-        var cantidad = $(this).siblings('.cantidad-producto').val();
-        $.post("{% url 'agregar_al_carrito' %}", {
-            producto_id: productId,
-            cantidad: cantidad,
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-        }).done(function() {
-            alert('Producto agregado al carrito.');
+    $(document).ready(function() {
+        $('.add-to-cart').click(function() {
+            var productId = $(this).data('id');
+            var cantidad = 1; // Puedes ajustar la cantidad según tus necesidades
+            $.post("{% url 'agregar_al_carrito' %}", {
+                producto_id: productId,
+                cantidad: cantidad,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            }).done(function(data) {
+                if (data.status === 'ok') {
+                    alert(data.message);
+                } else {
+                    alert('Hubo un error al agregar el producto al carrito.');
+                }
+            }).fail(function() {
+                alert('Error en la solicitud.');
+            });
         });
     });
-});
-</script>
+    </script>
 {% endblock %}
