@@ -222,6 +222,7 @@ def pago_exito(request):
         return render(request, 'app/pago_exito.html', {'response': response})
     else:
         return render(request, 'app/pago_error.html', {'response': response})
+
 #APIS
 def indicadores(request):
     try:
